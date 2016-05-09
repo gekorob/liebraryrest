@@ -1,0 +1,10 @@
+-r prod.txt
+
+# Testing
+mock
+pytest
+pytest-flask
+factory-boy
+
+# Management script
+Flask-Script
