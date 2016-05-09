@@ -46,7 +46,8 @@ docs/_build
 env/
 venv*
 
-# dbs
+# Migrations and dbs
 *.db
+migrations
 
 .idea
