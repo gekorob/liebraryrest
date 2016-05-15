@@ -1,5 +1,6 @@
 import json
 
+
 from flask import Blueprint, Response
 from liebraryrest.models import Author
 
@@ -8,7 +9,7 @@ blueprint = Blueprint('authors', __name__, url_prefix='/api/authors')
 
 @blueprint.route('')
 def author_list():
-    return Response(json.dumps(Author.query.all()),
+    return Response(Author.list_to_json(Author.query.all()),
                     mimetype='application/json',
                     status=200)
 
@@ -18,7 +19,7 @@ def author_show(author_id):
     auth = Author.get_by_id(author_id)
 
     if auth is not None:
-        return Response(json.dumps(auth),
+        return Response(auth.to_json(includes=['books']),
                         mimetype='application/json',
                         status=200)
 
