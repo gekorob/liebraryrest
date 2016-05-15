@@ -20,6 +20,25 @@ def test_list_authors(client, db):
     assert json.loads(res.data.decode('UTF-8')) == Author.serialize_list(authors)
 
 
+def test_search_authors_by_name(client, db):
+    AuthorFactory(first_name='Mario', last_name='Bianchi')
+    AuthorFactory(first_name='Mario', last_name='Rossi')
+    AuthorFactory(first_name='Nazario', last_name='Mossi')
+    db.session.commit()
+
+    res = client.get('/api/authors?name=Mario')
+    assert len(json.loads(res.data.decode('UTF-8'))) == 2
+
+    res = client.get('/api/authors?name=ario')
+    assert len(json.loads(res.data.decode('UTF-8'))) == 3
+
+    res = client.get('/api/authors?name=ossi')
+    assert len(json.loads(res.data.decode('UTF-8'))) == 2
+
+    res = client.get('/api/authors?name=mario%20rossi')
+    assert len(json.loads(res.data.decode('UTF-8'))) == 1
+
+
 def test_show_author_details_with_books(client, db):
     author = AuthorFactory(first_name='Mario', last_name='Rossi')
     books = BookFactory.create_batch(3, author=author)

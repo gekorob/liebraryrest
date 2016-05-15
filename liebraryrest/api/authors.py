@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, Response
+from flask import Blueprint, Response, request
 from liebraryrest.models import Author, Book
 
 blueprint = Blueprint('authors', __name__, url_prefix='/api/authors')
@@ -8,7 +8,12 @@ blueprint = Blueprint('authors', __name__, url_prefix='/api/authors')
 
 @blueprint.route('')
 def author_list():
-    return Response(Author.list_to_json(Author.query.all()),
+    qry = Author.query
+
+    if request.args.get('name'):
+        qry = qry.filter(Author.name.contains(request.args.get('name')))
+
+    return Response(Author.list_to_json(qry.all()),
                     mimetype='application/json',
                     status=200)
 
