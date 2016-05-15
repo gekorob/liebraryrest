@@ -1,4 +1,6 @@
 import json
+
+from liebraryrest.models import Author, Book
 from ..factories import AuthorFactory, BookFactory
 
 
@@ -15,7 +17,7 @@ def test_list_authors(client, db):
     res = client.get('/api/authors')
 
     assert res.status_code == 200
-    assert json.loads(res.data.decode('UTF-8')) == [m.serialize() for m in authors]
+    assert json.loads(res.data.decode('UTF-8')) == Author.serialize_list(authors)
 
 
 def test_show_author_details_with_books(client, db):
@@ -29,7 +31,6 @@ def test_show_author_details_with_books(client, db):
 
     assert res.status_code == 200
     assert author_found['name'] == author.name
+    assert author_found['birth_date'] == author.birth_date.isoformat()
     assert len(author_found['books']) == 3
-
-
-
+    assert author_found['books'] == Book.serialize_list(books)

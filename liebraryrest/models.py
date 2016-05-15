@@ -41,6 +41,10 @@ class Book(Model):
         self.pages = pages
         self.publisher = publisher
 
+    @classmethod
+    def get_by_isbn(cls, book_isbn):
+        return cls.query.get(book_isbn)
+
     def serialize(self, includes=None):
         d = super().serialize()
         if (includes is not None) and 'author' in includes:
