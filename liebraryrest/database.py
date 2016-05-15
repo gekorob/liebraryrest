@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
-from .extensions import db
+import json
+from sqlalchemy.inspection import inspect
 from sqlalchemy.orm import relationship
+
+from .extensions import db
 
 
 # Alias common SQLAlchemy names
@@ -42,3 +45,16 @@ class Model(CRUDMixin, db.Model):
 
     __abstract__ = True
 
+    def serialize(self, includes=None):
+        return {c: getattr(self, c) for c in inspect(self).attrs.keys()}
+
+    def to_json(self, includes=None):
+        return json.dumps(self.serialize(includes))
+
+    @classmethod
+    def serialize_list(cls, l, includes=None):
+        return [m.serialize(includes) for m in l]
+
+    @classmethod
+    def list_to_json(cls, l, includes=None):
+        return json.dumps(cls.serialize_list(l, includes))

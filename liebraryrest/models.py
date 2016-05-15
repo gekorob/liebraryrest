@@ -15,6 +15,15 @@ class Author(Model):
     def get_by_id(cls, author_id):
         return cls.query.get(int(author_id))
 
+    def serialize(self, includes=None):
+        d = super().serialize()
+        d['birth_date'] = d['birth_date'].isoformat()
+        if (includes is not None) and 'books' in includes:
+            d['books'] = Book.serialize_list(self.books.all())
+        else:
+            del d['books']
+        return d
+
 
 class Book(Model):
     isbn = db.Column(db.String(13), primary_key=True)
@@ -31,3 +40,15 @@ class Book(Model):
         self.abstract = abstract
         self.pages = pages
         self.publisher = publisher
+
+    @classmethod
+    def get_by_isbn(cls, book_isbn):
+        return cls.query.get(book_isbn)
+
+    def serialize(self, includes=None):
+        d = super().serialize()
+        if (includes is not None) and 'author' in includes:
+            d['author'] = Book.serialize_list(self.author)
+        else:
+            del d['author']
+        return d

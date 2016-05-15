@@ -47,6 +47,7 @@ def test_get_author_by_id(db):
     auth = AuthorFactory(first_name='Mario', last_name='Rossi')
     BookFactory.create_batch(10, author=auth)
     AuthorFactory.create_batch(24)
+    db.session.commit()
 
     assert Author.query.count() == 25
 
@@ -58,6 +59,7 @@ def test_get_author_by_id(db):
 
 def test_cannot_find_author(db):
     AuthorFactory.create_batch(24)
+    db.session.commit()
 
     assert Author.query.count() == 24
     assert Author.get_by_id(0) is None
