@@ -1,14 +1,32 @@
-from liebraryrest.models import Author
+from liebraryrest.models import Author, User
 
-from .factories import AuthorFactory, BookFactory
+from .factories import AuthorFactory, BookFactory, UserFactory
+
+
+def test_create_user(db):
+    user = UserFactory(nickname='gekorob')
+    db.session.commit()
+
+    assert user.id is not None
+    assert user.nickname == 'gekorob'
+
+
+def test_get_user_by_id(db):
+    user = UserFactory(nickname='gekorob')
+    db.session.commit()
+
+    user_found = User.get_by_id(user.id)
+
+    assert user_found.id == user.id
+    assert user_found.nickname == user.nickname
 
 
 def test_create_author(db):
     auth = AuthorFactory(first_name='Roby')
     db.session.commit()
 
-    assert auth.name.startswith('Roby')
     assert auth.id is not None
+    assert auth.name.startswith('Roby')
 
 
 def test_build_author_and_model_save(db):
@@ -59,7 +77,6 @@ def test_get_author_by_id(db):
 
 def test_cannot_find_author(db):
     AuthorFactory.create_batch(24)
-    db.session.commit()
 
     assert Author.query.count() == 24
     assert Author.get_by_id(0) is None

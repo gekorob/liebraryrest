@@ -1,6 +1,18 @@
 from liebraryrest.database import db, Model
 
 
+class User(Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nickname = db.Column(db.String(50), nullable=False, index=True)
+
+    def __init__(self, nickname):
+        self.nickname = nickname
+
+    @classmethod
+    def get_by_id(cls, user_id):
+        return cls.query.get(int(user_id))
+
+
 class Author(Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False, index=True)
@@ -33,13 +45,15 @@ class Book(Model):
     publisher = db.Column(db.String(250), nullable=True)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
 
-    def __init__(self, isbn, title, author, abstract=None, pages=None, publisher=None):
+    def __init__(self, isbn, title, author, abstract=None,
+                 pages=None, publisher=None, available=1):
         self.isbn = isbn
         self.title = title
         self.author = author
         self.abstract = abstract
         self.pages = pages
         self.publisher = publisher
+        self.available = available
 
     @classmethod
     def get_by_isbn(cls, book_isbn):
@@ -52,3 +66,8 @@ class Book(Model):
         else:
             del d['author']
         return d
+
+    def is_available(self):
+        return self.available > 0
+
+
