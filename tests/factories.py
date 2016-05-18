@@ -53,4 +53,4 @@ class BookFactory(BaseFactory):
     abstract = Faker('text', max_nb_chars=350)
     pages = Sequence(lambda n: n)
     publisher = Faker('word')
-    available = Sequence(lambda n: 1 + n)
+    quantity = Sequence(lambda n: 1 + n)

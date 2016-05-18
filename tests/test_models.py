@@ -1,6 +1,7 @@
-from liebraryrest.models import Author, User
-
+import pytest
 from .factories import AuthorFactory, BookFactory, UserFactory
+
+from liebraryrest.models import Author, User, Booking, Book
 
 
 def test_create_user(db):
@@ -36,6 +37,27 @@ def test_build_author_and_model_save(db):
     assert auth.id is not None
 
 
+def test_get_author_by_id(db):
+    auth = AuthorFactory(first_name='Mario', last_name='Rossi')
+    BookFactory.create_batch(10, author=auth)
+    AuthorFactory.create_batch(24)
+    db.session.commit()
+
+    assert Author.query.count() == 25
+
+    found_author = Author.get_by_id(auth.id)
+
+    assert found_author.name == 'Mario Rossi'
+    assert found_author.books.count() == 10
+
+
+def test_get_author_by_id_with_not_existing_author(db):
+    AuthorFactory.create_batch(24)
+
+    assert Author.query.count() == 24
+    assert Author.get_by_id(0) is None
+
+
 def test_create_book(db):
     auth = AuthorFactory(first_name='Mario', last_name='Rossi')
     book = BookFactory(title='History of Mario Rossi', author=auth)
@@ -61,22 +83,46 @@ def test_build_book_and_model_save(db):
     assert book.author == auth
 
 
-def test_get_author_by_id(db):
-    auth = AuthorFactory(first_name='Mario', last_name='Rossi')
-    BookFactory.create_batch(10, author=auth)
-    AuthorFactory.create_batch(24)
+def test_booking_an_existing_book(db):
+    book = BookFactory()
+    user = UserFactory()
     db.session.commit()
 
-    assert Author.query.count() == 25
+    booking = Booking(book, user)
+    booking.save()
 
-    found_author = Author.get_by_id(auth.id)
+    assert booking.book_isbn == book.isbn
+    assert booking.user_id == user.id
+    assert len(book.bookings.all()) == 1
+    assert len(user.bookings.all()) == 1
 
-    assert found_author.name == 'Mario Rossi'
-    assert found_author.books.count() == 10
+
+def test_no_double_booking(db):
+    book = BookFactory()
+    user = UserFactory()
+    db.session.commit()
+
+    booking = Booking(book, user)
+    booking.save(True)
+
+    with pytest.raises(Exception):
+        Booking(book, user).save(True)
 
 
-def test_cannot_find_author(db):
-    AuthorFactory.create_batch(24)
+def test_get_booking_by_isbn_and_userid(db):
+    book = BookFactory()
+    user = UserFactory()
+    db.session.commit()
 
-    assert Author.query.count() == 24
-    assert Author.get_by_id(0) is None
+    booking = Booking(book, user)
+    booking.save(True)
+
+    booking_found = Booking.get_by_isbn_and_user_id(book.isbn, user.id)
+
+    assert booking_found == booking
+
+
+def test_get_not_existing_booking_by_isbn_userid(db):
+    booking_found = Booking.get_by_isbn_and_user_id('abcdefghilmno', 0)
+
+    assert booking_found is None

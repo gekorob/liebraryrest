@@ -1,6 +1,6 @@
 import json
 from flask import Blueprint, Response
-from liebraryrest.models import Book, User
+from liebraryrest.models import Book, User, Booking
 
 blueprint = Blueprint('books', __name__, url_prefix='/api/books')
 
@@ -26,19 +26,30 @@ def book_show(book_isbn):
                     status=404)
 
 
-@blueprint.route('/<int:book_isbn>/booking/<int:user_id>',  methods=['POST'])
+@blueprint.route('/<int:book_isbn>/booking/<int:user_id>', methods=['POST'])
 def booking_on_a_book(book_isbn, user_id):
     book = Book.get_by_isbn(book_isbn)
     user = User.get_by_id(user_id)
 
     if (book is not None) and (user is not None):
+        booking = Booking.get_by_isbn_and_user_id(book.isbn, user.id)
+        if booking is not None:
+            return Response(
+                json.dumps("This book {} is already on the booking list of user {}"
+                           .format(book.isbn, user.id)),
+                mimetype='application/json',
+                status=400
+            )
         if book.is_available():
-            return Response(json.dumps({}),
+            book.quantity -= 1
+            book.save()
+            Booking(book.isbn, user.id).save()
+            return Response(json.dumps(booking.to_json()),
                             mimetype='application/json',
                             status=201)
         return Response(json.dumps("Book {} is not available for booking".format(book_isbn, user_id)),
-                    mimetype='application/json',
-                    status=400)
+                        mimetype='application/json',
+                        status=400)
 
     return Response(json.dumps("Unable to find Book: {} or user: {}".format(book_isbn, user_id)),
                     mimetype='application/json',
