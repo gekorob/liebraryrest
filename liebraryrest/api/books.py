@@ -31,6 +31,9 @@ def booking_on_a_book(book_isbn, user_id):
     book = Book.get_by_isbn(book_isbn)
     user = User.get_by_id(user_id)
 
+    print('###' + book.isbn)
+    print('###' + str(user.id))
+
     if (book is not None) and (user is not None):
         booking = Booking.get_by_isbn_and_user_id(book.isbn, user.id)
         if booking is not None:

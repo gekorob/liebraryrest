@@ -6,6 +6,7 @@ import pytest
 from liebraryrest.app import create_app
 from liebraryrest.database import db as _db
 from liebraryrest.settings import TestConfig
+from .factories import UserFactory, BookFactory
 
 
 @pytest.yield_fixture(scope='function')
@@ -32,3 +33,15 @@ def db(app):
     # Explicitly close DB connection
     _db.session.close()
     _db.drop_all()
+
+@pytest.fixture()
+def user(db):
+    user = UserFactory(nickname='gekorob')
+    db.session.commit()
+    return user
+
+@pytest.fixture()
+def book(db):
+    book = BookFactory(title='Lord of the Rings')
+    db.session.commit()
+    return book
