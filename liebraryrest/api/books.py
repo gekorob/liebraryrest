@@ -43,7 +43,8 @@ def booking_on_a_book(book_isbn, user_id):
         if book.is_available():
             book.quantity -= 1
             book.save()
-            Booking(book.isbn, user.id).save()
+            booking = Booking(book, user)
+            booking.save()
             return Response(json.dumps(booking.to_json()),
                             mimetype='application/json',
                             status=201)

@@ -95,6 +95,13 @@ class Booking(Model):
         self.user = user
         self.created_at = datetime.now()
 
+    def serialize(self, includes=None):
+        return {
+            'isbn': self.book.isbn,
+            'user_id:': self.user.id,
+            'created_at': self.created_at.isoformat()
+        }
+
     @classmethod
     def get_by_isbn_and_user_id(cls, book_isbn, user_id):
         return cls.query.filter(Booking.book_isbn == book_isbn, Booking.user_id == user_id).first()
