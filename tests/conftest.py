@@ -5,6 +5,7 @@ import pytest
 
 from liebraryrest.app import create_app
 from liebraryrest.database import db as _db
+from liebraryrest.models import Booking
 from liebraryrest.settings import TestConfig
 from .factories import UserFactory, BookFactory
 
@@ -45,3 +46,10 @@ def book(db):
     book = BookFactory(title='Lord of the Rings')
     db.session.commit()
     return book
+
+@pytest.fixture()
+def booking(book, user, db):
+    booking = Booking(book, user)
+    booking.save()
+    db.session.commit()
+    return booking

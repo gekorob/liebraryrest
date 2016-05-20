@@ -1,7 +1,7 @@
 import pytest
 from .factories import AuthorFactory, BookFactory, UserFactory
 
-from liebraryrest.models import Author, User, Booking, Book
+from liebraryrest.models import Author, User, Booking, Loan
 
 
 def test_create_user(db):
@@ -83,7 +83,7 @@ def test_build_book_and_model_save(db):
     assert book.author == auth
 
 
-def test_booking_an_existing_book(db):
+def test_booking_on_existing_book(db):
     book = BookFactory()
     user = UserFactory()
     db.session.commit()
@@ -126,3 +126,13 @@ def test_get_not_existing_booking_by_isbn_userid(db):
     booking_found = Booking.get_by_isbn_and_user_id('abcdefghilmno', 0)
 
     assert booking_found is None
+
+
+def test_create_loan_from_a_booking(booking, db):
+    loan = Loan(booking)
+    loan.save()
+
+    assert loan.book_isbn == booking.book_isbn
+    assert loan.user_id == booking.user_id
+    assert loan.booking == booking
+

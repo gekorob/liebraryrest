@@ -23,7 +23,7 @@ def test_list_books(client, db):
 def test_show_book(client, book, db):
     BookFactory.create_batch(3)
     db.session.commit()
-    
+
     res = client.get('api/books/{}'.format(book.isbn))
     assert res.status_code == 200
 

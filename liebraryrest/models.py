@@ -97,6 +97,7 @@ class Booking(Model):
 
     def serialize(self, includes=None):
         return {
+            'id': self.id,
             'isbn': self.book.isbn,
             'user_id:': self.user.id,
             'created_at': self.created_at.isoformat()
@@ -105,3 +106,32 @@ class Booking(Model):
     @classmethod
     def get_by_isbn_and_user_id(cls, book_isbn, user_id):
         return cls.query.filter(Booking.book_isbn == book_isbn, Booking.user_id == user_id).first()
+
+
+class Loan(Model):
+    __table_args__ = (UniqueConstraint('book_isbn', 'user_id', name='_book_isbn_user_id_on_loan'),)
+
+    id = db.Column(db.Integer, primary_key=True)
+    book_isbn = db.Column(db.String(13), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    booking_id = db.Column(db.Integer, db.ForeignKey('booking.id'))
+    started_at = db.Column(db.DateTime, nullable=False)
+    finished_at = db.Column(db.DateTime, nullable=True)
+
+    # define relationship
+    booking = db.relationship('Booking', backref='booking')
+
+    def __init__(self, booking):
+        self.book_isbn = booking.book_isbn
+        self.user_id = booking.user_id
+        self.booking = booking
+        self.started_at = datetime.now()
+
+    def serialize(self, includes=None):
+        return {
+            'id': self.id,
+            'book_isbn': self.book_isbn,
+            'user_id:': self.user_id,
+            'booking_id': self.booking.id,
+            'started_at': self.started_at.isoformat()
+        }
