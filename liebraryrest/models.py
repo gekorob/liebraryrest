@@ -135,3 +135,7 @@ class Loan(Model):
             'booking_id': self.booking.id,
             'started_at': self.started_at.isoformat()
         }
+
+    @classmethod
+    def get_by_booking_id(cls, booking_id):
+        return cls.query.filter(booking_id == booking_id).first()
