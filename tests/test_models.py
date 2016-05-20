@@ -83,7 +83,7 @@ def test_build_book_and_model_save(db):
     assert book.author == auth
 
 
-def test_booking_on_existing_book(db):
+def test_create_booking_on_existing_book(db):
     book = BookFactory()
     user = UserFactory()
     db.session.commit()
@@ -136,3 +136,20 @@ def test_create_loan_from_a_booking(booking, db):
     assert loan.user_id == booking.user_id
     assert loan.booking == booking
 
+
+def test_get_loan_by_booking_id(booking):
+    Loan(booking).save(True)
+
+    loan = Loan.get_by_booking_id(booking.id)
+
+    assert loan.book_isbn == booking.book_isbn
+
+
+def test_get_loan_by_isbn_and_userid(booking):
+    Loan(booking).save(True)
+
+    loan = Loan.get_by_isbn_and_user_id(booking.book_isbn, booking.user_id)
+
+    assert loan.booking_id == booking.id
+    assert loan.book_isbn == booking.book_isbn
+    assert loan.user_id == booking.user_id
