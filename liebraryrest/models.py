@@ -7,6 +7,7 @@ class User(Model):
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(50), nullable=False, index=True)
     bookings = db.relationship('Booking', backref='user', lazy="dynamic")
+    loans = db.relationship('Loan', backref='user', lazy="dynamic")
 
     def __init__(self, nickname):
         self.nickname = nickname
@@ -18,6 +19,7 @@ class User(Model):
     def serialize(self, includes=None):
         d = super().serialize()
         d.pop('bookings')
+        d.pop('loans')
         return d
 
 
@@ -113,7 +115,7 @@ class Loan(Model):
 
     id = db.Column(db.Integer, primary_key=True)
     book_isbn = db.Column(db.String(13), nullable=False)
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     booking_id = db.Column(db.Integer, db.ForeignKey('booking.id'))
     started_at = db.Column(db.DateTime, nullable=False)
     finished_at = db.Column(db.DateTime, nullable=True)
@@ -128,6 +130,7 @@ class Loan(Model):
         self.started_at = datetime.now()
 
     def serialize(self, includes=None):
+        d = super().serialize()
         return {
             'id': self.id,
             'book_isbn': self.book_isbn,
@@ -138,4 +141,8 @@ class Loan(Model):
 
     @classmethod
     def get_by_booking_id(cls, booking_id):
-        return cls.query.filter(booking_id == booking_id).first()
+        return cls.query.filter(Loan.booking_id == booking_id).first()
+
+    @classmethod
+    def get_by_isbn_and_user_id(cls, isbn, user_id):
+        return cls.query.filter(Loan.book_isbn == isbn, Loan.user_id == user_id).first()

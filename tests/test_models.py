@@ -143,3 +143,13 @@ def test_get_loan_by_booking_id(booking):
     loan = Loan.get_by_booking_id(booking.id)
 
     assert loan.book_isbn == booking.book_isbn
+
+
+def test_get_loan_by_isbn_and_userid(booking):
+    Loan(booking).save(True)
+
+    loan = Loan.get_by_isbn_and_user_id(booking.book_isbn, booking.user_id)
+
+    assert loan.booking_id == booking.id
+    assert loan.book_isbn == booking.book_isbn
+    assert loan.user_id == booking.user_id
