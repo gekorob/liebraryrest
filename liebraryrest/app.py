@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """The app module, containing the app factory function."""
-from flask import Flask, render_template
+from flask import Flask
 
-from liebraryrest.api import authors, books
+from liebraryrest.api import authors, books, users
 from liebraryrest.extensions import db, migrate
 from liebraryrest.settings import ProdConfig
 
@@ -30,4 +30,5 @@ def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(authors.blueprint)
     app.register_blueprint(books.blueprint)
+    app.register_blueprint(users.blueprint)
     return None

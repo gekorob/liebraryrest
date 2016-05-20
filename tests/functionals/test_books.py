@@ -20,9 +20,8 @@ def test_list_books(client, db):
     assert json.loads(res.data.decode('UTF-8')) == Book.serialize_list(books)
 
 
-def test_show_book(client, db):
+def test_show_book(client, book, db):
     BookFactory.create_batch(3)
-    book = BookFactory()
     db.session.commit()
 
     res = client.get('api/books/{}'.format(book.isbn))
@@ -40,7 +39,7 @@ def test_show_book(client, db):
 
 def test_list_books_by_author_id(client, db):
     author = AuthorFactory(first_name='Mario', last_name='Rossi')
-    books = BookFactory.create_batch(3, author=author)
+    BookFactory.create_batch(3, author=author)
     BookFactory.create_batch(5)
     db.session.commit()
 
