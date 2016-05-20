@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, Response
+from flask import Blueprint, Response, request
 from liebraryrest.models import Book, User, Booking
 
 blueprint = Blueprint('books', __name__, url_prefix='/api/books')
@@ -26,8 +26,18 @@ def book_show(book_isbn):
                     status=404)
 
 
-@blueprint.route('/<int:book_isbn>/booking/<int:user_id>', methods=['POST'])
-def booking_on_a_book(book_isbn, user_id):
+@blueprint.route('/<int:book_isbn>/bookings', methods=['POST'])
+def booking_on_a_book(book_isbn):
+    try:
+        request_body = json.loads(request.data.decode('UTF-8'))
+        user_id = request_body['user_id']
+    except (ValueError, KeyError):
+        return Response(
+                json.dumps("Invalid JSON or missing user_id param"),
+                mimetype='application/json',
+                status=400)
+
+
     book = Book.get_by_isbn(book_isbn)
     user = User.get_by_id(user_id)
 
