@@ -33,16 +33,12 @@ def booking_on_a_book(book_isbn):
         user_id = request_body['user_id']
     except (ValueError, KeyError):
         return Response(
-                json.dumps("Invalid JSON or missing user_id param"),
-                mimetype='application/json',
-                status=400)
-
+            json.dumps("Invalid JSON or missing user_id param"),
+            mimetype='application/json',
+            status=400)
 
     book = Book.get_by_isbn(book_isbn)
     user = User.get_by_id(user_id)
-
-    print('###' + book.isbn)
-    print('###' + str(user.id))
 
     if (book is not None) and (user is not None):
         booking = Booking.get_by_isbn_and_user_id(book.isbn, user.id)
