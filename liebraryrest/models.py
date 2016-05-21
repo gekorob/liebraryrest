@@ -53,7 +53,7 @@ class Book(Model):
     abstract = db.Column(db.Text, nullable=True)
     pages = db.Column(db.Integer, nullable=True)
     publisher = db.Column(db.String(250), nullable=True)
-    quantity = db.Column(db.Integer, nullable=True)
+    quantity = db.Column(db.Integer, default=1)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
     bookings = db.relationship('Booking', backref='book', lazy="dynamic")
 

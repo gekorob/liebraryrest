@@ -35,7 +35,7 @@ def upgrade():
     sa.Column('abstract', sa.Text(), nullable=True),
     sa.Column('pages', sa.Integer(), nullable=True),
     sa.Column('publisher', sa.String(length=250), nullable=True),
-    sa.Column('quantity', sa.Integer(), nullable=True),
+    sa.Column('quantity', sa.Integer(), default=1),
     sa.Column('author_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['author_id'], ['author.id'], ),
     sa.PrimaryKeyConstraint('isbn')
