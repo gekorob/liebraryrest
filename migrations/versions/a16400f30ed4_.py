@@ -32,6 +32,12 @@ book_table = table('book',
                    column('author_id', sa.Integer),
                    column('quantity', sa.Integer))
 
+booking_table = table('booking',
+                   column('id', sa.Integer))
+
+loan_table = table('loan',
+                   column('id', sa.Integer))
+
 migrations_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.pardir)
 csv_path = os.path.join(migrations_dir, 'csv')
 
@@ -51,6 +57,8 @@ def downgrade():
     _downgrade(user_table)
     _downgrade(author_table)
     _downgrade(book_table, 'isbn')
+    _downgrade(booking_table)
+    _downgrade(loan_table)
 
 
 def _seed(table_obj, file_path, tx=None):
