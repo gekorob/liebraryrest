@@ -48,7 +48,6 @@ venv*
 
 # Migrations and dbs
 *.db
-migrations
 
 .idea
 .cache

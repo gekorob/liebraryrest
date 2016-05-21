@@ -4,7 +4,7 @@ from factory import Sequence, Faker, SubFactory
 from factory.alchemy import SQLAlchemyModelFactory
 
 from liebraryrest.database import db
-from liebraryrest.models import Author, Book
+from liebraryrest.models import Author, Book, User
 
 
 class BaseFactory(SQLAlchemyModelFactory):
@@ -15,6 +15,16 @@ class BaseFactory(SQLAlchemyModelFactory):
 
         abstract = True
         sqlalchemy_session = db.session
+
+
+class UserFactory(BaseFactory):
+    """User factory"""
+
+    class Meta:
+        """Factory configuration."""
+        model = User
+
+    nickname = Faker('user_name')
 
 
 class AuthorFactory(BaseFactory):
@@ -43,3 +53,4 @@ class BookFactory(BaseFactory):
     abstract = Faker('text', max_nb_chars=350)
     pages = Sequence(lambda n: n)
     publisher = Faker('word')
+    quantity = Sequence(lambda n: 1 + n)
