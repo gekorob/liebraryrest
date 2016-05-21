@@ -42,7 +42,7 @@ def user_bookings(user_id):
 
 
 @blueprint.route('/<int:user_id>/loans')
-def user_borrowed(user_id):
+def user_loans(user_id):
     user = User.get_by_id(user_id)
 
     if user is not None:
@@ -53,12 +53,3 @@ def user_borrowed(user_id):
     return Response(json.dumps("No author found with id {}".format(user_id)),
                     mimetype='application/json',
                     status=404)
-
-    # if user is not None:
-    #     return Response(Booking.list_to_json(user.bookings.all()),
-    #                     mimetype='application/json',
-    #                     status=200)
-    #
-    # return Response(json.dumps("No author found with id {}".format(user_id)),
-    #                 mimetype='application/json',
-    #                 status=404)
