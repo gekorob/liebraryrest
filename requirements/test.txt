@@ -1,0 +1,6 @@
+-r prod.txt
+
+# Testing
+pytest
+pytest-flask
+factory-boy

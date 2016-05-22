@@ -1,4 +1,9 @@
+pip>8
+
 SQLAlchemy
 Flask
 Flask-SQLAlchemy
 Flask-Migrate
+
+# Management script
+Flask-Script
