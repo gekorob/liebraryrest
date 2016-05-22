@@ -1,4 +1,4 @@
-pip>8
+pip >= 8.1
 
 SQLAlchemy
 Flask
