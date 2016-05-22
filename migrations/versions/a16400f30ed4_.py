@@ -65,7 +65,6 @@ def _seed(table_obj, file_path, tx=None):
     with open(file_path, 'r') as f:
         reader = DictReader(f, delimiter=',')
         rows = list(reader)
-    print(rows)
 
     if tx is not None:
         rows = [_tx_row(row, tx) for row in rows]
