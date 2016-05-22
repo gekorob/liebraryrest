@@ -1,7 +1,6 @@
 -r prod.txt
 
 # Testing
-mock
 pytest
 pytest-flask
 factory-boy
