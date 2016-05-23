@@ -14,7 +14,7 @@ def user_list():
 
 
 @blueprint.route('/<int:user_id>')
-def author_show(user_id):
+def user_show(user_id):
     users = User.get_by_id(user_id)
 
     if users is not None:

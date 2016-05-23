@@ -12,7 +12,7 @@ def book_list():
                     status=200)
 
 
-@blueprint.route('/<int:book_isbn>')
+@blueprint.route('/<book_isbn>')
 def book_show(book_isbn):
     book = Book.get_by_isbn(book_isbn)
 
@@ -26,7 +26,7 @@ def book_show(book_isbn):
                     status=404)
 
 
-@blueprint.route('/<int:book_isbn>/bookings', methods=['POST'])
+@blueprint.route('/<book_isbn>/bookings', methods=['POST'])
 def booking_on_a_book(book_isbn):
     try:
         request_body = json.loads(request.data.decode('UTF-8'))
@@ -54,7 +54,7 @@ def booking_on_a_book(book_isbn):
             book.save()
             booking = Booking(book, user)
             booking.save()
-            return Response(json.dumps(booking.to_json()),
+            return Response(booking.to_json(),
                             mimetype='application/json',
                             status=201)
         return Response(json.dumps("Book {} is not available for booking".format(book_isbn, user_id)),
