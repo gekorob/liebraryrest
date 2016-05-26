@@ -15,18 +15,13 @@ def author_list():
     author_repo = AuthorRepository()
     uc = AuthorListUseCase(author_repo)
 
-    return Response(AuthorSerializer.json_list(uc.execute()),
+    filters = None
+    if request.args.get('name'):
+        filters = {'name': request.args.get('name')}
+
+    return Response(AuthorSerializer.json_list(uc.execute(filters)),
                     mimetype='application/json',
                     status=200)
-
-    # qry = Author.query
-
-    # if request.args.get('name'):
-    #     qry = qry.filter(Author.name.contains(request.args.get('name')))
-
-    # return Response(Author.list_to_json(qry.all()),
-    #                 mimetype='application/json',
-    #                 status=200)
 
 
 @blueprint.route('/<int:author_id>')

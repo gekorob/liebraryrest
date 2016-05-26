@@ -18,3 +18,11 @@ def test_list_authors(db):
     assert repo.list() == expected_authors
 
 
+def test_list_authors_using_filter_on_name(db):
+    AuthorFactory.create_batch(3)
+    auth = AuthorFactory(first_name='Asimov')
+    repo = AuthorRepository()
+
+    expected_authors = [do.Author(auth.id, auth.name, auth.birth_date)]
+
+    assert repo.list({'name': 'Asimov'}) == expected_authors
