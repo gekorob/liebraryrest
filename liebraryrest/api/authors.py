@@ -1,21 +1,32 @@
 import json
 
 from flask import Blueprint, Response, request
+from liebrary.usecases.author import AuthorListUseCase
+
 from liebraryrest.models import Author, Book
+from liebraryrest.repositories.author_repository import AuthorRepository
+from liebraryrest.serializers import AuthorSerializer
 
 blueprint = Blueprint('authors', __name__, url_prefix='/api/authors')
 
 
 @blueprint.route('')
 def author_list():
-    qry = Author.query
+    author_repo = AuthorRepository()
+    uc = AuthorListUseCase(author_repo)
 
-    if request.args.get('name'):
-        qry = qry.filter(Author.name.contains(request.args.get('name')))
-
-    return Response(Author.list_to_json(qry.all()),
+    return Response(AuthorSerializer.json_list(uc.execute()),
                     mimetype='application/json',
                     status=200)
+
+    # qry = Author.query
+
+    # if request.args.get('name'):
+    #     qry = qry.filter(Author.name.contains(request.args.get('name')))
+
+    # return Response(Author.list_to_json(qry.all()),
+    #                 mimetype='application/json',
+    #                 status=200)
 
 
 @blueprint.route('/<int:author_id>')

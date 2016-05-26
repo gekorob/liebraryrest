@@ -7,3 +7,6 @@ Flask-Migrate
 
 # Management script
 Flask-Script
+
+# Liebrary app
+liebrary
